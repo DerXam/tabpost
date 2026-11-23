@@ -4,6 +4,8 @@ A self-hosted, multi-account IMAP/SMTP webmail client that lives in a browser
 tab. React + Vite on the front, an Express IMAP proxy on the back. The server
 keeps no credentials and no mail.
 
+![Tabpost: unified inbox across three accounts, with a message open](docs/screenshot.png)
+
 ## Security model
 
 The service is deliberately open — anyone may use it with their own mail
@@ -54,6 +56,7 @@ file-serving surface.
 |---|---|---|
 | `NODE_ENV` | — | Must be `production` to serve the built bundle. |
 | `TRUST_PROXY` | `0` | Number of reverse proxies in front of the app. Set correctly, or rate limiting buckets every visitor under the proxy's IP. |
+| `PUBLIC_URL` | — | Public address, e.g. `https://mail.example.com`. Needed for link previews (`og:image`), which require absolute URLs. |
 | `MAX_CACHED_CONNECTIONS` | `200` | Upper bound on simultaneously cached IMAP connections. |
 | `DEBUG_LOG` | off | Writes redacted log lines to `./search_debug.log`. |
 | `ALLOW_PRIVATE_MAIL_HOSTS` | off | ⚠️ Permits mail servers on private/loopback networks. Re-opens SSRF against your own LAN. |

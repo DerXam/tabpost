@@ -1439,9 +1439,18 @@ async function startServer() {
     app.use(vite.middlewares);
   } else {
     const distPath = path.join(process.cwd(), 'dist');
-    app.use(express.static(distPath));
+    // Link previews (Reddit, chat apps) only accept absolute image URLs, so
+    // with PUBLIC_URL set the preview tags point at this deployment.
+    let indexHtml = fs.readFileSync(path.join(distPath, 'index.html'), 'utf8');
+    const publicUrl = (process.env.PUBLIC_URL || '').replace(/\/+$/, '');
+    if (/^https?:\/\/[^\s"<>]+$/.test(publicUrl)) {
+      indexHtml = indexHtml
+        .replace('content="/og.png"', `content="${publicUrl}/og.png"`)
+        .replace('</head>', `  <meta property="og:url" content="${publicUrl}/" />\n  </head>`);
+    }
+    app.use(express.static(distPath, { index: false }));
     app.get('*', (req, res) => {
-      res.sendFile(path.join(distPath, 'index.html'));
+      res.type('html').send(indexHtml);
     });
   }
 

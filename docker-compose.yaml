@@ -11,6 +11,9 @@ services:
       # Number of reverse proxies in front of the app. Must be correct, or
       # rate limiting buckets every visitor under the proxy's own IP.
       TRUST_PROXY: "1"
+      # Public address of this deployment, e.g. https://mail.example.com. Makes
+      # link previews (og:image) work. Set it in a .env file next to this one.
+      PUBLIC_URL: ${PUBLIC_URL:-}
       # Danger switches — see the comments in server.ts before enabling either.
       # ALLOW_PRIVATE_MAIL_HOSTS: "true"
       # ALLOW_SELF_SIGNED_TLS: "true"
