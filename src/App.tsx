@@ -133,6 +133,19 @@ export default function App() {
     typeof window !== 'undefined' && 'Notification' in window ? Notification.permission : 'default'
   );
   
+  // Browser tab title, a per-browser choice (e.g. plain "mail").
+  const TAB_TITLE_KEY = 'tabpost_tab_title';
+  const [tabTitle, setTabTitle] = useState<string>(() => {
+    try { return localStorage.getItem(TAB_TITLE_KEY) ?? ''; } catch { return ''; }
+  });
+  useEffect(() => {
+    document.title = tabTitle.trim() || 'Tabpost';
+    try {
+      if (tabTitle.trim()) localStorage.setItem(TAB_TITLE_KEY, tabTitle);
+      else localStorage.removeItem(TAB_TITLE_KEY);
+    } catch { /* storage blocked: title still applies for this session */ }
+  }, [tabTitle]);
+
   // View mode navigation router
   const [viewMode, setViewMode] = useState<'list' | 'detail' | 'navigation'>('list');
 
@@ -1807,6 +1820,22 @@ export default function App() {
                           </button>
                         )}
                       </div>
+                    </div>
+                    {/* Custom browser tab title */}
+                    <div className="flex items-center justify-between gap-3 border-t border-slate-100 pt-3">
+                      <div className="text-left shrink-0">
+                        <label htmlFor="tab-title" className="text-xs font-bold text-slate-800 block">Tab Name</label>
+                        <span className="text-[9px] text-slate-400 leading-none">Title of this browser tab</span>
+                      </div>
+                      <input
+                        id="tab-title"
+                        type="text"
+                        value={tabTitle}
+                        onChange={(e) => setTabTitle(e.target.value)}
+                        placeholder="Tabpost"
+                        maxLength={60}
+                        className="min-w-0 w-32 px-2 py-1 text-xs border border-slate-200 rounded focus:outline-none focus:border-blue-500 text-slate-800"
+                      />
                     </div>
                   </div>
 
