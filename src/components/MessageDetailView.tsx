@@ -120,6 +120,14 @@ export default function MessageDetailView({
     return `${(bytes / 1048576).toFixed(1)} MB`;
   };
 
+  // Plain-text mail goes into the HTML document below, so it must not be
+  // parsed as markup: "<b>" in a text mail is text, not bold.
+  const escapeHtml = (value: string) =>
+    value
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+
   // Dynamic sandbox source mapping
   const srcDoc = detail
     ? viewMode === 'html' && detail.html
@@ -172,7 +180,7 @@ export default function MessageDetailView({
               }
             </style>
           </head>
-          <body>${detail.text || '(Empty Body)'}</body>
+          <body>${escapeHtml(detail.text || '(Empty Body)')}</body>
         </html>
       `
     : '';
