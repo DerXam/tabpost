@@ -1,0 +1,15 @@
+node_modules
+dist
+server.js
+.env
+.env.*
+
+# Contains redacted-but-still-operational logs about users' mailboxes.
+*.log
+search_debug.log
+
+.DS_Store
+
+# Local tooling and deployment helpers
+.claude/
+restart*.sh

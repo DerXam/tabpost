@@ -1,0 +1,18 @@
+version: '2.2'
+
+services:
+  app:
+    build: .
+    ports:
+      - "3009:3000"
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      # Number of reverse proxies in front of the app. Must be correct, or
+      # rate limiting buckets every visitor under the proxy's own IP.
+      TRUST_PROXY: "1"
+      # Danger switches — see the comments in server.ts before enabling either.
+      # ALLOW_PRIVATE_MAIL_HOSTS: "true"
+      # ALLOW_SELF_SIGNED_TLS: "true"
+      # Writes redacted debug lines to ./search_debug.log inside the container.
+      # DEBUG_LOG: "true"
