@@ -50,12 +50,39 @@ const SMTP_PORTS = new Set([25, 465, 587, 2525]);
 
 app.disable('x-powered-by');
 
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+
+// Mail passwords sit in localStorage, so an XSS bug would hand over every
+// account. This policy is the second line of defence: only our own bundled
+// scripts may run, and scripts may only talk to this server, so injected code
+// can neither start nor send anything out.
+//
+// The mail view is a srcdoc iframe, which inherits this policy. That is why
+// images and fonts may come from anywhere (remote images in mail) and inline
+// styles are allowed (mail HTML is full of them). Neither can run code.
+//
+// Production only: the Vite dev server needs inline scripts and a websocket.
+const CONTENT_SECURITY_POLICY = [
+  "default-src 'self'",
+  "script-src 'self'",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob: https: http:",
+  "font-src 'self' data: https:",
+  "media-src 'self' data: blob: https:",
+  "connect-src 'self'",
+  "object-src 'none'",
+  "base-uri 'none'",
+  "form-action 'none'",
+  "frame-ancestors 'none'",
+].join('; ');
+
 app.use((req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'DENY');
   // Credentials used to travel in query strings; make sure no URL ever leaks
   // to a third party via the Referer header.
   res.setHeader('Referrer-Policy', 'no-referrer');
+  if (IS_PRODUCTION) res.setHeader('Content-Security-Policy', CONTENT_SECURITY_POLICY);
   next();
 });
 

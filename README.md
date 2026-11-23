@@ -23,7 +23,9 @@ localStorage and are sent with each request.
 ### Known residual risks
 
 - **Passwords sit in localStorage in plaintext.** Any XSS in this app hands over
-  every configured account. Mail HTML is rendered in a scripts-disabled iframe
+  every configured account. In production a Content-Security-Policy allows only
+  the bundled scripts and lets scripts talk to this server alone, so injected
+  code can neither run nor send anything out. Mail HTML is rendered in a scripts-disabled iframe
   and attachments are always served as `application/octet-stream`, which are the
   two paths that would otherwise lead there.
 - **Remote images in mail are loaded**, so senders can see when a message was
